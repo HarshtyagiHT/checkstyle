@@ -416,15 +416,21 @@ public class UnusedLocalVariableCheck extends AbstractCheck {
         final DetailAST lastChild = literalNewAst.getLastChild();
         if (lastChild != null && lastChild.getType() == TokenTypes.OBJBLOCK) {
             DetailAST parentAst = literalNewAst.getParent();
-            while (parentAst.getType() != TokenTypes.SLIST) {
-                if (TokenUtil.isTypeDeclaration(parentAst.getParent().getType())) {
-                    break;
-                }
-                parentAst = parentAst.getParent();
-            }
+            parentAst = getDetailAST(parentAst);
             result = parentAst.getType() == TokenTypes.SLIST;
         }
         return result;
+    }
+
+    private static DetailAST getDetailAST(DetailAST parentAst) {
+        DetailAST ast = parentAst;
+        while (ast.getType() != TokenTypes.SLIST) {
+            if (TokenUtil.isTypeDeclaration(ast.getParent().getType())) {
+                break;
+            }
+            ast = ast.getParent();
+        }
+        return ast;
     }
 
     /**
@@ -653,12 +659,17 @@ public class UnusedLocalVariableCheck extends AbstractCheck {
      */
     private String getQualifiedTypeDeclarationName(DetailAST typeDeclAst) {
         final String className = typeDeclAst.findFirstToken(TokenTypes.IDENT).getText();
+        String outerClassQualifiedName = getString();
+        return CheckUtil
+            .getQualifiedTypeDeclarationName(packageName, outerClassQualifiedName, className);
+    }
+
+    private String getString() {
         String outerClassQualifiedName = null;
         if (!typeDeclarations.isEmpty()) {
             outerClassQualifiedName = typeDeclarations.peek().getQualifiedName();
         }
-        return CheckUtil
-            .getQualifiedTypeDeclarationName(packageName, outerClassQualifiedName, className);
+        return outerClassQualifiedName;
     }
 
     /**

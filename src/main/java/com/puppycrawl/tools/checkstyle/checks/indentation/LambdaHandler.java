@@ -71,10 +71,7 @@ public class LambdaHandler extends AbstractExpressionHandler {
             return getParent().getSuggestedChildIndent(this);
         }
 
-        DetailAST parent = getMainAst().getParent();
-        if (getParent() instanceof NewHandler) {
-            parent = parent.getParent();
-        }
+        DetailAST parent = getDetailAST();
 
         // Use the start of the parent's line as the reference indentation level.
         IndentLevel level = new IndentLevel(getLineStart(parent));
@@ -87,6 +84,14 @@ public class LambdaHandler extends AbstractExpressionHandler {
         }
 
         return level;
+    }
+
+    private DetailAST getDetailAST() {
+        DetailAST parent = getMainAst().getParent();
+        if (getParent() instanceof NewHandler) {
+            parent = parent.getParent();
+        }
+        return parent;
     }
 
     @Override

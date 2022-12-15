@@ -272,13 +272,18 @@ public final class ExecutableStatementCountCheck
          * @param as the token representing the statement list.
          */
         private void visitSlist(DetailAST ast1) {
+            DetailAST parent = getDetailAST(ast1);
+            if (parent == ast) {
+                addCount(ast1.getChildCount() / 2);
+            }
+        }
+
+        private DetailAST getDetailAST(DetailAST ast1) {
             DetailAST parent = ast1.getParent();
             while (parent != null && !isContainerNode(parent)) {
                 parent = parent.getParent();
             }
-            if (parent == ast) {
-                addCount(ast1.getChildCount() / 2);
-            }
+            return parent;
         }
     }
 
