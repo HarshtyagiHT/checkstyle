@@ -43,7 +43,7 @@ class SinglelineDetector {
     /** The detection options to use. */
     private final DetectorOptions options;
     /** Tracks the number of matches. */
-    private int currentMatches;
+    public int currentMatches;
 
     /**
      * Creates an instance.
@@ -67,20 +67,7 @@ class SinglelineDetector {
             lineNo++;
             checkLine(lineNo, line, options.getPattern().matcher(line), 0);
         }
-        finish();
-    }
-
-    /** Perform processing at the end of a set of lines. */
-    private void finish() {
-        if (currentMatches < options.getMinimum()) {
-            if (options.getMessage().isEmpty()) {
-                options.getReporter().log(1, MSG_REGEXP_MINIMUM,
-                        options.getMinimum(), options.getFormat());
-            }
-            else {
-                options.getReporter().log(1, options.getMessage());
-            }
-        }
+        options.finish(this);
     }
 
     /**

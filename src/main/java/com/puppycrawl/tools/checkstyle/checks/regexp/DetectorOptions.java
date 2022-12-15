@@ -52,6 +52,7 @@ public final class DetectorOptions {
     private MatchSuppressor suppressor;
     /** Pattern created from format. Lazily initialized. */
     private Pattern pattern;
+    private int currentMatches;
 
     /** Default constructor.*/
     private DetectorOptions() {
@@ -127,6 +128,31 @@ public final class DetectorOptions {
      */
     public Pattern getPattern() {
         return pattern;
+    }
+
+    /** Perform processing at the end of a set of lines.*/
+    void finish(SinglelineDetector singlelineDetector) {
+        if (singlelineDetector.currentMatches < minimum) {
+            logReporter();
+        }
+    }
+
+    /** Perform processing at the end of a set of lines. 
+     *  */
+    void finish(MultilineDetector multilineDetector) {
+        if (multilineDetector.currentMatches < minimum) {
+            logReporter();
+        }
+    }
+
+    private void logReporter() {
+        if (message.isEmpty()) {
+            reporter.log(1, MultilineDetector.MSG_REGEXP_MINIMUM,
+                    minimum, format);
+        }
+        else {
+            reporter.log(1, message);
+        }
     }
 
     /** Class which implements Builder pattern to build DetectorOptions instance. */

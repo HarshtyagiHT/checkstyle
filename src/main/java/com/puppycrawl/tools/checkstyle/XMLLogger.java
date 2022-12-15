@@ -71,7 +71,7 @@ public class XMLLogger
     /**
      * Helper writer that allows easy encoding and printing.
      */
-    private final PrintWriter writer;
+    public final PrintWriter writer;
 
     /**
      * Creates a new {@code XMLLogger} instance.
@@ -141,7 +141,7 @@ public class XMLLogger
         writeFileOpeningTag(fileName);
         if (messages != null) {
             for (AuditEvent errorEvent : messages.getErrors()) {
-                writeFileError(errorEvent);
+                errorEvent.writeFileError(this);
             }
             for (Throwable exception : messages.getExceptions()) {
                 writeException(exception);
@@ -172,7 +172,7 @@ public class XMLLogger
             final String fileName = event.getFileName();
             if (fileName == null || !fileMessages.containsKey(fileName)) {
                 synchronized (writerLock) {
-                    writeFileError(event);
+                    event.writeFileError(this);
                 }
             }
             else {
@@ -180,32 +180,6 @@ public class XMLLogger
                 messages.addError(event);
             }
         }
-    }
-
-    /**
-     * Outputs the given event to the writer.
-     *
-     * @param event An event to print.
-     */
-    private void writeFileError(AuditEvent event) {
-        writer.print("<error" + " line=\"" + event.getLine() + "\"");
-        if (event.getColumn() > 0) {
-            writer.print(" column=\"" + event.getColumn() + "\"");
-        }
-        writer.print(" severity=\""
-                + event.getSeverityLevel().getName()
-                + "\"");
-        writer.print(" message=\""
-                + encode(event.getMessage())
-                + "\"");
-        writer.print(" source=\"");
-        if (event.getModuleId() == null) {
-            writer.print(encode(event.getSourceName()));
-        }
-        else {
-            writer.print(encode(event.getModuleId()));
-        }
-        writer.println("\"/>");
     }
 
     @Override

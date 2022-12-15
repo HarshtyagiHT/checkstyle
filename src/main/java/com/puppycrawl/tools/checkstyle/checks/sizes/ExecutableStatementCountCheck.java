@@ -165,7 +165,7 @@ public final class ExecutableStatementCountCheck
             visitContainerNode(ast);
         }
         else if (TokenUtil.isOfType(ast, TokenTypes.SLIST)) {
-            visitSlist(ast);
+            context.visitSlist(ast);
         }
         else {
             throw new IllegalStateException(ast.toString());
@@ -203,22 +203,6 @@ public final class ExecutableStatementCountCheck
             log(ast, MSG_KEY, count, max);
         }
         context = contextStack.pop();
-    }
-
-    /**
-     * Process the end of a statement list.
-     *
-     * @param ast the token representing the statement list.
-     */
-    private void visitSlist(DetailAST ast) {
-        final DetailAST contextAST = context.getAST();
-        DetailAST parent = ast.getParent();
-        while (parent != null && !isContainerNode(parent)) {
-            parent = parent.getParent();
-        }
-        if (parent == contextAST) {
-            context.addCount(ast.getChildCount() / 2);
-        }
     }
 
     /**
@@ -282,6 +266,20 @@ public final class ExecutableStatementCountCheck
             return count;
         }
 
+        /**
+         * Process the end of a statement list.
+         *
+         * @param as the token representing the statement list.
+         */
+        private void visitSlist(DetailAST ast1) {
+            DetailAST parent = ast1.getParent();
+            while (parent != null && !isContainerNode(parent)) {
+                parent = parent.getParent();
+            }
+            if (parent == ast) {
+                addCount(ast1.getChildCount() / 2);
+            }
+        }
     }
 
 }

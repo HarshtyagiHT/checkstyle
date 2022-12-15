@@ -55,7 +55,7 @@ class MultilineDetector {
     /** The detection options to use. */
     private final DetectorOptions options;
     /** Tracks the number of matches. */
-    private int currentMatches;
+    public int currentMatches;
     /** The matcher. */
     private Matcher matcher;
     /** The file text content. */
@@ -86,7 +86,7 @@ class MultilineDetector {
         else {
             matcher = options.getPattern().matcher(fileText.getFullText());
             findMatch();
-            finish();
+            options.finish(this);
         }
     }
 
@@ -117,19 +117,6 @@ class MultilineDetector {
             // http://programmers.stackexchange.com/questions/
             //        209099/is-it-ever-okay-to-catch-stackoverflowerror-in-java
             options.getReporter().log(1, MSG_STACKOVERFLOW, matcher.pattern().toString());
-        }
-    }
-
-    /** Perform processing at the end of a set of lines. */
-    private void finish() {
-        if (currentMatches < options.getMinimum()) {
-            if (options.getMessage().isEmpty()) {
-                options.getReporter().log(1, MSG_REGEXP_MINIMUM,
-                        options.getMinimum(), options.getFormat());
-            }
-            else {
-                options.getReporter().log(1, options.getMessage());
-            }
         }
     }
 

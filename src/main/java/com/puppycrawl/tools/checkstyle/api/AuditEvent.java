@@ -19,6 +19,7 @@
 
 package com.puppycrawl.tools.checkstyle.api;
 
+import com.puppycrawl.tools.checkstyle.XMLLogger;
 import java.util.EventObject;
 
 /**
@@ -158,4 +159,27 @@ public final class AuditEvent
         return violation;
     }
 
+    /**
+     * Outputs the given event to the writer
+     */
+    public void writeFileError(XMLLogger xmlLogger) {
+        xmlLogger.writer.print("<error" + " line=\"" + getLine() + "\"");
+        if (getColumn() > 0) {
+            xmlLogger.writer.print(" column=\"" + getColumn() + "\"");
+        }
+        xmlLogger.writer.print(" severity=\""
+                + getSeverityLevel().getName()
+                + "\"");
+        xmlLogger.writer.print(" message=\""
+                + XMLLogger.encode(getMessage())
+                + "\"");
+        xmlLogger.writer.print(" source=\"");
+        if (getModuleId() == null) {
+            xmlLogger.writer.print(XMLLogger.encode(getSourceName()));
+        }
+        else {
+            xmlLogger.writer.print(XMLLogger.encode(getModuleId()));
+        }
+        xmlLogger.writer.println("\"/>");
+    }
 }

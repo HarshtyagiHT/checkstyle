@@ -602,29 +602,9 @@ public class UnusedLocalVariableCheck extends AbstractCheck {
     private List<TypeDeclDesc> typeDeclWithSameName(String superClassName) {
         return typeDeclAstToTypeDeclDesc.values().stream()
                 .filter(typeDeclDesc -> {
-                    return hasSameNameAsSuperClass(superClassName, typeDeclDesc);
+                    return typeDeclDesc.hasSameNameAsSuperClass(superClassName, this);
                 })
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Whether the qualified name of {@code typeDeclDesc} matches the super class name.
-     *
-     * @param superClassName name of the super class
-     * @param typeDeclDesc type declaration description
-     * @return {@code true} if the qualified name of {@code typeDeclDesc}
-     *         matches the super class name
-     */
-    private boolean hasSameNameAsSuperClass(String superClassName, TypeDeclDesc typeDeclDesc) {
-        final boolean result;
-        if (packageName == null && typeDeclDesc.getDepth() == 0) {
-            result = typeDeclDesc.getQualifiedName().equals(superClassName);
-        }
-        else {
-            result = typeDeclDesc.getQualifiedName()
-                    .endsWith(PACKAGE_SEPARATOR + superClassName);
-        }
-        return result;
     }
 
     /**
@@ -1039,6 +1019,25 @@ public class UnusedLocalVariableCheck extends AbstractCheck {
          */
         public void addInstOrClassVar(VariableDesc variableDesc) {
             instanceAndClassVarStack.push(variableDesc);
+        }
+
+        /**
+         * Whether the qualified name of {@code typeDeclDesc} matches the super class name.
+         *
+         * @param superClassName name of the super class
+         * @return {@code true} if the qualified name of {@code typeDeclDesc}
+         *         matches the super class name
+         */
+        private boolean hasSameNameAsSuperClass(String superClassName, UnusedLocalVariableCheck unusedLocalVariableCheck) {
+            final boolean result;
+            if (unusedLocalVariableCheck.packageName == null && depth == 0) {
+                result = qualifiedName.equals(superClassName);
+            }
+            else {
+                result = qualifiedName
+                        .endsWith(PACKAGE_SEPARATOR + superClassName);
+            }
+            return result;
         }
     }
 }

@@ -162,4 +162,15 @@ public class IndentLevel {
         return result;
     }
 
+    /**
+     * Checks that given indent is acceptable or not.
+     *
+     * @param astColumnNo indent value to check
+     * @return true if indent is not acceptable
+     */
+    boolean isNonAcceptableIndent(int astColumnNo, LambdaHandler lambdaHandler) {
+        return astColumnNo < getFirstIndentLevel()
+            || lambdaHandler.getIndentCheck().isForceStrictCondition()
+               && !isAcceptable(astColumnNo);
+    }
 }
