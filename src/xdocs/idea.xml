@@ -40,6 +40,21 @@
         <br/><br/>
       </p>
     </section>
+    <section name="Import jar File into Project">
+      <p>
+        Download the latest jar File from "https://github.com/checkstyle/checkstyle/releases".
+      </p>
+      <p>
+        Select File > Project Structure from Existing Sources<br/><br/>
+        <span class="wrapper block">
+          <img alt="screenshot" src="images/gui_screenshot_importing_jar.png"/>
+        </span>
+        <br/><br/>
+        Then click "+" and add the downloaded jar File.
+        <br/><br/>
+        Then click apply and ok.
+      </p>
+    </section>
 
     <section name="Debug">
       <p>
